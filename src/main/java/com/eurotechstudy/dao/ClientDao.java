@@ -2,18 +2,15 @@ package com.eurotechstudy.dao;
 
 import com.eurotechstudy.config.ConnectionPoolConfig;
 import com.eurotechstudy.entity.Clients;
-import com.eurotechstudy.entity.Invoices;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 
-import java.math.BigDecimal;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ClientDao implements Dao <Clients, Integer>{
+public class ClientDao implements Dao<Clients, Integer> {
 
     @Getter
     private static final ClientDao INSTANCE = new ClientDao();
@@ -77,16 +74,15 @@ public class ClientDao implements Dao <Clients, Integer>{
             """;
 
 
-
     @Override
     public Clients save(Clients clients) {
         try (HikariDataSource hikariDataSource = ConnectionPoolConfig.getHikariDataSource();
              Connection connection = hikariDataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL);
-            preparedStatement.setInt(1,clients.getClient_id());
-            preparedStatement.setString(2,clients.getName());
-            preparedStatement.setString(3,clients.getAddress());
-            preparedStatement.setString(4,clients.getCity());
+            preparedStatement.setInt(1, clients.getClient_id());
+            preparedStatement.setString(2, clients.getName());
+            preparedStatement.setString(3, clients.getAddress());
+            preparedStatement.setString(4, clients.getCity());
             preparedStatement.setString(5, clients.getState());
             preparedStatement.setString(6, clients.getPhone());
 
@@ -95,7 +91,7 @@ public class ClientDao implements Dao <Clients, Integer>{
 
             if (rowEffected > 0) {
                 System.out.println("Clients saved " + rowEffected + " rows");
-            }else {
+            } else {
                 System.out.println("Clients save failed");
             }
 
@@ -110,17 +106,17 @@ public class ClientDao implements Dao <Clients, Integer>{
         try (HikariDataSource hikariDataSource = ConnectionPoolConfig.getHikariDataSource();
              Connection connection = hikariDataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL);
-            preparedStatement.setString(1,clients.getAddress());
-            preparedStatement.setString(2,clients.getName());
-            preparedStatement.setString(3,clients.getCity());
+            preparedStatement.setString(1, clients.getAddress());
+            preparedStatement.setString(2, clients.getName());
+            preparedStatement.setString(3, clients.getCity());
             preparedStatement.setString(4, clients.getState());
             preparedStatement.setString(5, clients.getPhone());
-            preparedStatement.setInt(6,clients.getClient_id());
+            preparedStatement.setInt(6, clients.getClient_id());
 
             int rowEffected = preparedStatement.executeUpdate();
             if (rowEffected > 0) {
                 System.out.println("Clients updated " + rowEffected + " rows");
-            }else {
+            } else {
                 System.out.println("Clients update failed");
             }
         } catch (SQLException e) {
@@ -137,7 +133,7 @@ public class ClientDao implements Dao <Clients, Integer>{
             int rowEffected = preparedStatement.executeUpdate();
             if (rowEffected > 0) {
                 return true;
-            }else {
+            } else {
                 return false;
             }
         } catch (SQLException e) {
@@ -155,13 +151,13 @@ public class ClientDao implements Dao <Clients, Integer>{
             ResultSet resultSet = preparedStatement.executeQuery();
             Clients clients = null;
             if (resultSet.next()) {
-                clients = new Clients (
-                        resultSet.getObject(1,Integer.class),
-                        resultSet.getObject(2,String.class),
-                        resultSet.getObject(3,String.class),
+                clients = new Clients(
+                        resultSet.getObject(1, Integer.class),
+                        resultSet.getObject(2, String.class),
+                        resultSet.getObject(3, String.class),
                         resultSet.getObject(4, String.class),
                         resultSet.getObject(5, String.class),
-                        resultSet.getObject(6,String.class)
+                        resultSet.getObject(6, String.class)
                 );
             }
             return Optional.ofNullable(clients);
@@ -195,7 +191,7 @@ public class ClientDao implements Dao <Clients, Integer>{
         }
     }
 
-    public void subSelectMethod(){
+    public void subSelectMethod() {
         try (HikariDataSource hikariDataSource = ConnectionPoolConfig.getHikariDataSource();
              Connection connection = hikariDataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(SUBSELECT_SQL);
@@ -203,20 +199,19 @@ public class ClientDao implements Dao <Clients, Integer>{
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
             for (int i = 1; i <= columnCount; i++) {
-                System.out.printf("%20s",metaData.getColumnName(i));
+                System.out.printf("%20s", metaData.getColumnName(i));
             }
             System.out.println();
             while (resultSet.next()) {
                 for (int i = 1; i <= columnCount; i++) {
-                    System.out.printf("%20s",resultSet.getObject(i));
+                    System.out.printf("%20s", resultSet.getObject(i));
                 }
                 System.out.println();
             }
             System.out.println();
-            
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
